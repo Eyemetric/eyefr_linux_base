@@ -1,0 +1,9 @@
+---
+- name:  Configure Container engine for RedHat
+  ansible.builtin.include_tasks: "setup_RedHat.yml"
+  when: ansible_distribution == 'RedHat'
+
+
+- name:  Configure Container engine for Ubuntu
+  ansible.builtin.include_tasks: "setup_Ubuntu.yml"
+  when: ansible_distribution == 'Ubuntu'

@@ -1,0 +1,35 @@
+---
+- name: Install utilities and tools
+  dnf:
+    name:
+      - tmux
+      - sqlite
+      - fzf
+      - ripgrep
+      - vim
+      - htop
+      - nvtop
+      - nmap
+    state: present
+
+- name: Install Rust toolset
+  dnf:
+    name: rust-toolset
+    state: present
+
+- name: Install Rust toolset
+  dnf:
+    name: go-toolset
+    state: present
+
+- name: Add Cargo bin to PATH persistently
+  lineinfile:
+    path: "/home/{{ target_user }}/.bashrc"
+    line: 'export PATH="$HOME/.cargo/bin:$PATH"'
+    state: present
+
+- name: Add Go bin to PATH persistently
+  lineinfile:
+    path: "/home/{{ target_user }}/.bashrc"
+    line: 'export PATH="$HOME/go/bin:$PATH"'
+    state: present

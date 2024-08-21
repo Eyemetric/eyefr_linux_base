@@ -1,0 +1,36 @@
+---
+- name: Ensure wheel group exists
+  group:
+    name: wheel
+    state: present
+
+- name: Allow wheel group to run sudo without password
+  lineinfile:
+    path: /etc/sudoers
+    state: present
+    regexp: "^%wheel"
+    line: "%wheel ALL=(ALL) NOPASSWD: ALL"
+    validate: "visudo -cf %s"
+
+- name: create default group
+  group:
+    name: "{{ default_group }}"
+    state: present
+  changed_when: false
+
+- name: create the non-root user.
+  user:
+    name: "{{ default_username }}"
+    password: "{{ default_pwd | password_hash('sha512') }}"
+    #password: "{{ default_pwd }}"
+    shell: /bin/bash
+    groups: "{{ default_group }}"
+    append: true
+    state: present
+  changed_when: false
+
+- name: Add sudoers users to wheel group
+  user:
+    name: "{{ default_username }}"
+    groups: wheel
+    append: yes

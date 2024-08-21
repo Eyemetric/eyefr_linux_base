@@ -1,0 +1,27 @@
+---
+- name: Configure Docker engine for Ubuntu
+  ansible.builtin.fail:
+    msg: "Not yet supported"
+  when: true
+
+- name: Install Docker engine
+  include_role:
+    name: geerlingguy.docker
+
+- name: Configure Docker gpu access
+  when: nvidia_check.rc == 0 # check had an exit code of 0 which means, nvidia is ready
+  block:
+    - name: update docker runtime config for cdi
+      ansible.builtin.script:
+        cmd: update_docker_cdi_config.sh
+        creates: /etc/docker/daemon.json
+
+    - name: Configure nvidia-container-runtime for Docker
+      command: nvidia-ctk runtime configure --runtime=docker
+      changed_when: false
+
+    - name: Ensure Docker is running and enabled
+      service:
+        name: docker
+        state: started
+        enabled: true

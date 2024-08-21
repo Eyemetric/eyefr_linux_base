@@ -1,0 +1,7 @@
+---
+- name: Register RHEL installation with sub
+  community.general.redhat_subscription:
+    state: present
+    username: "{{ subscription_username }}"
+    password: "{{ subscription_password }}"
+    auto_attach: true

@@ -1,0 +1,4 @@
+---
+# defaults file for eyemetric.nvidia
+nvidia_driver_state: present
+min_cuda_version: "12.0"

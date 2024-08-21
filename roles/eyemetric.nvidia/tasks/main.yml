@@ -1,0 +1,13 @@
+---
+
+- name: Manage Nvidia drivers
+  nvidia_driver_install_dkms:
+    min_cuda_version: "{{ min_cuda_version }}"
+    ansible_distribution: "{{ ansible_distribution }}"
+    state: "{{ nvidia_driver_state }}"
+
+  register: nvidia_result
+
+- name: Display the result
+  debug:
+    var: nvidia_result

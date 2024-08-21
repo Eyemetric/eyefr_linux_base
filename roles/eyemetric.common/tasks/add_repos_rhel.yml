@@ -1,0 +1,31 @@
+---
+# enable our RHLE repos
+
+- name: RHSM Enable AppStream repo for RHEL 8 or 9
+  community.general.rhsm_repository:
+    name: rhel-{{ ansible_distribution_major_version }}-for-x86_64-appstream-rpms
+
+- name: RHSM enable BaseOS repo RHEL 8 or 9
+  community.general.rhsm_repository:
+    name: rhel-{{ ansible_distribution_major_version }}-for-x86_64-baseos-rpms
+
+- name: RHSM enable a CodeReady repo RHEL 8 or 9
+  community.general.rhsm_repository:
+    name: codeready-builder-for-rhel-{{ ansible_distribution_major_version }}-x86_64-rpms
+  register: codeready
+
+- name: Import epel gpg key for RHEL 8 or 9
+  rpm_key:
+    state: present
+    key: https://dl.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-{{ ansible_distribution_major_version }}
+
+- name: install EPEL Repo on RHEL 8 or 9
+  dnf:
+    name: https://dl.fedoraproject.org/pub/epel/epel-release-latest-{{ ansible_distribution_major_version }}.noarch.rpm
+    state: latest
+
+- name: dnf update RHEL
+  register: dnf_update
+  ansible.builtin.dnf:
+    name: "*"
+    state: latest

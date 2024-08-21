@@ -1,0 +1,12 @@
+---
+- name: Setup Rhel or Ubuntu to Eyemetric Baseline
+  hosts: all
+  become: true
+  vars:
+    ansible_become_pass: "{{ host_sudo_pass[inventory_hostname] | default(default_sudo_pass) }}"
+    nvidia_driver_state: absent
+    container_management_state: absent
+  roles:
+    - { role: eyemetric.container_engine, tags: ["container_engine"] }
+    - { role: eyemetric.nvidia, tags: ["nvidia"] }
+    - { role: eyemetric.common, tags: ["common"] }

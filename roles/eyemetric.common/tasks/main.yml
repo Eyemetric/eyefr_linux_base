@@ -1,0 +1,28 @@
+---
+# roles/basic_config/tasks/main.yml
+- name: Gather facts about the system
+  ansible.builtin.setup:
+
+# - name: Register RHEL license
+#  ansible.builtin.include_tasks: "create_subscription_rhel.yml"
+#  when: ansible_distribution == 'RedHat'
+
+- name: Include task files
+  ansible.builtin.include_tasks: "{{ item }}"
+  vars:
+     ssh_user: "{{ target_user }}"
+     username: "{{ target_user }}"
+     # ssh_key_path: "{{ ssh_key_path }}"
+  with_items:
+     - add_repos_rhel.yml
+     - create_users_rhel.yml
+     - setup_ssh_rhel.yml
+     - add_tools_rhel.yml
+  when: ansible_distribution == 'RedHat'
+
+
+- name: Include OS-specific tasks for Ubuntu
+  ansible.builtin.include_tasks: "create_users_ubuntu_{{ ansible_distribution_major_version }}.yml"
+  when: ansible_distribution == 'Ubuntu'
+
+# ... rest of the file remains the same

@@ -1,0 +1,32 @@
+---
+- name: Ensure OpenSSH is installed (Ubuntu)
+  apt:
+    name: openssh-server
+    state: present
+    update_cache: yes
+
+- name: Ensure SSH service is running and enabled (Ubuntu)
+  service:
+    name: ssh
+    state: started
+    enabled: yes
+
+- name: Get home directory of the SSH user
+  become_user: "{{ ssh_user }}"
+  command: "echo $HOME"
+  register: user_home
+  changed_when: false
+
+- name: Create .ssh directory if it doesn't exist
+  file:
+    path: "{{ user_home.stdout }}/.ssh"
+    state: directory
+    mode: "0700"
+    owner: "{{ ssh_user }}"
+    group: "{{ ssh_user }}"
+
+- name: Copy SSH public key to remote server
+  authorized_key:
+    user: "{{ ssh_user }}"
+    state: present
+    key: "{{ lookup('file', ssh_key_path) }}"

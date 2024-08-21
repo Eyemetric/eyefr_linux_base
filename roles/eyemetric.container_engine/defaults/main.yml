@@ -1,0 +1,11 @@
+# roles/podman_rhel/defaults/main.yml
+---
+container_management_state: present
+
+cdi_spec_path: "/etc/cdi/nvidia.yaml"
+containers_conf_path: "/etc/containers/containers.conf"
+nvidia_container_runtime_path: "/etc/nvidia-container-runtime/config.toml"
+cdi_spec_dirs: ["/etc/cdi"]
+
+docker_on_rhel: true # option to install docker alongside podman on rhel machines.
+docker_daemon_json_path: "/etc/docker/daemon.json"
