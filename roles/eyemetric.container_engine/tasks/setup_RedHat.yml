@@ -13,7 +13,7 @@
     state: absent
 
 - name: Ensure Nvidia drivers are ready for gpu container access config.
-  command: nvidia-smi
+  ansible.builtin.command: nvidia-smi
   register: nvidia_check
   changed_when: false
   failed_when: false
@@ -32,7 +32,7 @@
         path: "{{ nvidia_container_runtime_path }}"
         regexp: "^#no-cgroups = false"
         line: "no-cgroups = true"
-        #state: "{{ container_management_state }}"
+        # state: "{{ container_management_state }}"
         state: "{{ container_management_state }}"
 
     - name: Generate CDI specification for NVIDIA GPUs
@@ -42,7 +42,7 @@
         creates: "{{ cdi_spec_path }}"
 
     - name: Detect number of NVIDIA GPUs
-      #when: container_management_state == "present" or container_management_state == "latest"
+      # when: container_management_state == "present" or container_management_state == "latest"
       ansible.builtin.command: nvidia-smi --query-gpu=name --format=csv,noheader
       register: gpu_list
       failed_when: gpu_list.rc != 0
@@ -64,25 +64,25 @@
   when: docker_on_rhel
   vars:
     docker_packages_state: "{{ container_management_state }}"
-  include_role:
+  ansible.builtin.include_role:
     name: geerlingguy.docker
 
 - name: Setup Docker side by side with podman
   when: docker_on_rhel and nvidia_check.rc == 0 # check had an exit code of 0 which means, nvidia is ready
   block:
-    - name: update docker runtime config for cdi
+    - name: Update docker runtime config for cdi
       when: container_management_state != "absent"
       ansible.builtin.script:
         cmd: update_docker_cdi_config.sh
         creates: /etc/docker/daemon.json
 
     - name: Configure nvidia-container-runtime for Docker
-      command: nvidia-ctk runtime configure --runtime=docker
+      ansible.builtin.command: nvidia-ctk runtime configure --runtime=docker
       when: container_management_state != "absent"
       changed_when: false
 
     - name: Ensure Docker is running and enabled
-      service:
+      ansible.builtin.service:
         name: docker
         state: started
         enabled: true

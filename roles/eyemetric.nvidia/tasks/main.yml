@@ -9,5 +9,5 @@
   register: nvidia_result
 
 - name: Display the result
-  debug:
+  ansible.builtin.debug:
     var: nvidia_result
